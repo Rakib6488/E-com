@@ -162,6 +162,58 @@
             <section class="admin-dashboard__panel">
                 <div class="admin-panel-heading">
                     <div>
+                        <span>Homepage</span>
+                        <h4>Trend Section Editor</h4>
+                    </div>
+                </div>
+
+                <form class="admin-form" id="trend-form">
+                    <div class="admin-form__grid">
+                        <label>Section
+                            <select id="trend-section">
+                                <option value="hot">Hot Trend</option>
+                                <option value="best">Best seller</option>
+                                <option value="feature">Feature</option>
+                            </select>
+                        </label>
+                        <label>Section Title
+                            <input id="trend-section-title" type="text">
+                        </label>
+                        <label>Item Name
+                            <input id="trend-name" type="text" required>
+                        </label>
+                        <label>Price
+                            <input id="trend-price" min="0" step="0.01" type="number" required>
+                        </label>
+                        <label>Image Path or URL
+                            <input id="trend-image" type="text">
+                        </label>
+                    </div>
+                    <div class="admin-button-row">
+                        <button class="site-btn" id="trend-submit" type="submit">Update Trend Item</button>
+                        <button class="admin-soft-button" id="trend-clear" type="button">Clear Selection</button>
+                    </div>
+                </form>
+
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Section</th>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trend-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="admin-dashboard__panel">
+                <div class="admin-panel-heading">
+                    <div>
                         <span>Inventory</span>
                         <h4>Manage Products</h4>
                     </div>

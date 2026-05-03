@@ -603,6 +603,14 @@ ol {
 	font-weight: 800;
 }
 
+.admin-button-row {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-bottom: 24px;
+}
+
 .admin-table-tools {
 	display: grid;
 	gap: 12px;

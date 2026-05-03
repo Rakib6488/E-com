@@ -8,10 +8,13 @@
 
     var content = window.FarhaStore.load();
     var activeProductId = null;
+    var activeTrendId = null;
 
     var form = document.getElementById('product-form');
+    var trendForm = document.getElementById('trend-form');
     var settingsForm = document.getElementById('settings-form');
     var productTable = document.getElementById('product-table-body');
+    var trendTable = document.getElementById('trend-table-body');
     var productCount = document.getElementById('product-count');
     var inventoryCount = document.getElementById('inventory-count');
     var lowStockCount = document.getElementById('low-stock-count');
@@ -57,6 +60,29 @@
         };
     }
 
+    function trendFromForm() {
+        return {
+            id: activeTrendId || 't-' + Date.now(),
+            section: value('trend-section'),
+            sectionTitle: value('trend-section-title') || sectionLabel(value('trend-section')),
+            name: value('trend-name'),
+            price: Number(value('trend-price')) || 0,
+            image: value('trend-image') || 'img/trend/ht-1.jpg'
+        };
+    }
+
+    function sectionLabel(section) {
+        if (section === 'best') {
+            return 'Best seller';
+        }
+
+        if (section === 'feature') {
+            return 'Feature';
+        }
+
+        return 'Hot Trend';
+    }
+
     function clearProductForm() {
         activeProductId = null;
         form.reset();
@@ -65,6 +91,15 @@
         setValue('product-stock', '1');
         document.getElementById('product-featured').checked = true;
         document.getElementById('product-submit').textContent = 'Add Product';
+    }
+
+    function clearTrendForm() {
+        activeTrendId = null;
+        trendForm.reset();
+        setValue('trend-section', 'hot');
+        setValue('trend-section-title', 'Hot Trend');
+        setValue('trend-image', 'img/trend/ht-1.jpg');
+        document.getElementById('trend-submit').textContent = 'Update Trend Item';
     }
 
     function editProduct(id) {
@@ -89,6 +124,24 @@
         document.getElementById('product-featured').checked = product.featured !== false;
         document.getElementById('product-submit').textContent = 'Update Product';
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function editTrend(id) {
+        var trend = content.trends.find(function (item) {
+            return item.id === id;
+        });
+
+        if (!trend) {
+            return;
+        }
+
+        activeTrendId = id;
+        setValue('trend-section', trend.section);
+        setValue('trend-section-title', trend.sectionTitle);
+        setValue('trend-name', trend.name);
+        setValue('trend-price', trend.price);
+        setValue('trend-image', trend.image);
+        trendForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function deleteProduct(id) {
@@ -138,6 +191,23 @@
         }
     }
 
+    function renderTrends() {
+        var sectionOrder = { hot: 1, best: 2, feature: 3 };
+        var trends = content.trends.slice().sort(function (a, b) {
+            return (sectionOrder[a.section] || 9) - (sectionOrder[b.section] || 9);
+        });
+
+        trendTable.innerHTML = trends.map(function (trend) {
+            return '<tr>' +
+                '<td><img class="admin-product-thumb" src="' + window.FarhaStore.safeText(trend.image) + '" alt=""></td>' +
+                '<td><strong>' + window.FarhaStore.safeText(trend.sectionTitle || sectionLabel(trend.section)) + '</strong><span>' + window.FarhaStore.safeText(trend.section) + '</span></td>' +
+                '<td>' + window.FarhaStore.safeText(trend.name) + '</td>' +
+                '<td>' + window.FarhaStore.money(trend.price) + '</td>' +
+                '<td><button class="admin-link-button" data-trend-edit="' + trend.id + '" type="button">Edit</button></td>' +
+                '</tr>';
+        }).join('');
+    }
+
     function renderStats() {
         var totalInventory = content.products.reduce(function (sum, product) {
             return sum + Number(product.stock || 0);
@@ -161,6 +231,7 @@
     function render() {
         renderStats();
         renderProducts();
+        renderTrends();
         window.FarhaStore.applySettings();
     }
 
@@ -186,6 +257,27 @@
         clearProductForm();
     });
 
+    trendForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var nextTrend = trendFromForm();
+
+        if (!nextTrend.name) {
+            notify('Trend item name is required');
+            return;
+        }
+
+        if (activeTrendId) {
+            content.trends = content.trends.map(function (trend) {
+                return trend.id === activeTrendId ? nextTrend : trend;
+            });
+        } else {
+            content.trends.push(nextTrend);
+        }
+
+        saveContent('Trend item saved');
+        clearTrendForm();
+    });
+
     settingsForm.addEventListener('submit', function (event) {
         event.preventDefault();
         content.settings.siteName = value('setting-site-name') || 'Farha E-com';
@@ -208,10 +300,19 @@
         }
     });
 
+    trendTable.addEventListener('click', function (event) {
+        var editId = event.target.getAttribute('data-trend-edit');
+
+        if (editId) {
+            editTrend(editId);
+        }
+    });
+
     searchInput.addEventListener('input', renderProducts);
     categoryFilter.addEventListener('change', renderProducts);
 
     document.getElementById('product-clear').addEventListener('click', clearProductForm);
+    document.getElementById('trend-clear').addEventListener('click', clearTrendForm);
 
     document.getElementById('export-content').addEventListener('click', function () {
         var blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
@@ -235,6 +336,7 @@
                 var imported = JSON.parse(reader.result);
                 content.settings = Object.assign({}, content.settings, imported.settings || {});
                 content.products = Array.isArray(imported.products) ? imported.products : content.products;
+                content.trends = Array.isArray(imported.trends) ? imported.trends : content.trends;
                 saveContent('Content imported');
             } catch (error) {
                 notify('Import failed. Use a valid JSON file.');
@@ -251,6 +353,7 @@
 
         content = window.FarhaStore.reset();
         clearProductForm();
+        clearTrendForm();
         renderSettings();
         saveContent('Content reset');
     });
@@ -277,5 +380,6 @@
 
     renderSettings();
     clearProductForm();
+    clearTrendForm();
     render();
 }());

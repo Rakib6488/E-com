@@ -116,6 +116,80 @@
                 description: 'Durable everyday backpack.',
                 featured: true
             }
+        ],
+        trends: [
+            {
+                id: 't-1',
+                section: 'hot',
+                sectionTitle: 'Hot Trend',
+                name: 'Chain bucket bag',
+                price: 59,
+                image: 'img/trend/ht-1.jpg'
+            },
+            {
+                id: 't-2',
+                section: 'hot',
+                sectionTitle: 'Hot Trend',
+                name: 'Pendant earrings',
+                price: 59,
+                image: 'img/trend/ht-2.jpg'
+            },
+            {
+                id: 't-3',
+                section: 'hot',
+                sectionTitle: 'Hot Trend',
+                name: 'Cotton T-Shirt',
+                price: 59,
+                image: 'img/trend/ht-3.jpg'
+            },
+            {
+                id: 't-4',
+                section: 'best',
+                sectionTitle: 'Best seller',
+                name: 'Cotton T-Shirt',
+                price: 59,
+                image: 'img/trend/bs-1.jpg'
+            },
+            {
+                id: 't-5',
+                section: 'best',
+                sectionTitle: 'Best seller',
+                name: 'Zip-pockets pebbled tote briefcase',
+                price: 59,
+                image: 'img/trend/bs-2.jpg'
+            },
+            {
+                id: 't-6',
+                section: 'best',
+                sectionTitle: 'Best seller',
+                name: 'Round leather bag',
+                price: 59,
+                image: 'img/trend/bs-3.jpg'
+            },
+            {
+                id: 't-7',
+                section: 'feature',
+                sectionTitle: 'Feature',
+                name: 'Bow wrap skirt',
+                price: 59,
+                image: 'img/trend/f-1.jpg'
+            },
+            {
+                id: 't-8',
+                section: 'feature',
+                sectionTitle: 'Feature',
+                name: 'Metallic earrings',
+                price: 59,
+                image: 'img/trend/f-2.jpg'
+            },
+            {
+                id: 't-9',
+                section: 'feature',
+                sectionTitle: 'Feature',
+                name: 'Flap cross-body bag',
+                price: 59,
+                image: 'img/trend/f-3.jpg'
+            }
         ]
     };
 
@@ -135,6 +209,7 @@
             var content = JSON.parse(saved);
             content.settings = Object.assign({}, defaultContent.settings, content.settings || {});
             content.products = Array.isArray(content.products) ? content.products : clone(defaultContent.products);
+            content.trends = Array.isArray(content.trends) ? content.trends : clone(defaultContent.trends);
             return content;
         } catch (error) {
             save(defaultContent);
@@ -267,6 +342,47 @@
         }
     }
 
+    function trendItem(item) {
+        return '<div class="trend__item">' +
+            '<div class="trend__item__pic">' +
+            '<img src="' + safeText(item.image || DEFAULT_IMAGE) + '" alt="">' +
+            '</div>' +
+            '<div class="trend__item__text">' +
+            '<h6>' + safeText(item.name) + '</h6>' +
+            renderRating() +
+            '<div class="product__price">' + money(item.price) + '</div>' +
+            '</div>' +
+            '</div>';
+    }
+
+    function renderTrends() {
+        var content = load();
+        var trendRoot = document.querySelector('[data-farha-trends]');
+        var sections = [
+            { id: 'hot', title: 'Hot Trend' },
+            { id: 'best', title: 'Best seller' },
+            { id: 'feature', title: 'Feature' }
+        ];
+
+        if (!trendRoot) {
+            return;
+        }
+
+        trendRoot.innerHTML = sections.map(function (section) {
+            var items = content.trends.filter(function (item) {
+                return item.section === section.id;
+            });
+            var title = items[0] && items[0].sectionTitle ? items[0].sectionTitle : section.title;
+
+            return '<div class="col-lg-4 col-md-4 col-sm-6">' +
+                '<div class="trend__content">' +
+                '<div class="section-title"><h4>' + safeText(title) + '</h4></div>' +
+                items.map(trendItem).join('') +
+                '</div>' +
+                '</div>';
+        }).join('');
+    }
+
     function applySettings() {
         var content = load();
         var settings = content.settings;
@@ -289,6 +405,7 @@
     function initPublic() {
         applySettings();
         renderProducts();
+        renderTrends();
     }
 
     window.FarhaStore = {
@@ -300,6 +417,7 @@
         safeText: safeText,
         applySettings: applySettings,
         renderProducts: renderProducts,
+        renderTrends: renderTrends,
         initPublic: initPublic
     };
 
