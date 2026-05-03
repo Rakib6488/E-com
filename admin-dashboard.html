@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Farha E-com admin dashboard">
+    <meta name="keywords" content="Farha E-com, admin, dashboard">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Admin Dashboard | Farha E-com</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+</head>
+
+<body>
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <header class="admin-dashboard__header">
+        <a class="site-logo-text" href="./index.html">Farha E-com</a>
+        <button class="admin-dashboard__logout" id="admin-logout" type="button">Logout</button>
+    </header>
+
+    <main class="admin-dashboard">
+        <div class="container">
+            <div class="section-title">
+                <h4>Admin Dashboard</h4>
+            </div>
+            <div class="admin-dashboard__grid">
+                <div class="admin-dashboard__item">
+                    <span>Orders</span>
+                    <strong>24</strong>
+                </div>
+                <div class="admin-dashboard__item">
+                    <span>Products</span>
+                    <strong>128</strong>
+                </div>
+                <div class="admin-dashboard__item">
+                    <span>Customers</span>
+                    <strong>86</strong>
+                </div>
+            </div>
+            <div class="admin-dashboard__panel">
+                <h5>Welcome, admin</h5>
+                <p>You are logged in to the Farha E-com admin area.</p>
+                <a class="primary-btn" href="./index.html">View Website</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/mixitup.min.js"></script>
+    <script src="js/jquery.countdown.min.js"></script>
+    <script src="js/jquery.slicknav.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/jquery.nicescroll.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        if (sessionStorage.getItem('farhaAdminLoggedIn') !== 'true') {
+            window.location.href = './admin-login.html';
+        }
+
+        document.getElementById('admin-logout').addEventListener('click', function () {
+            sessionStorage.removeItem('farhaAdminLoggedIn');
+            window.location.href = './admin-login.html';
+        });
+    </script>
+</body>
+
+</html>
