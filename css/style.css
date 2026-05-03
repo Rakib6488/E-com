@@ -330,6 +330,18 @@ ol {
 	display: inline-block;
 }
 
+.site-logo-text {
+	color: #111111;
+	font-size: 24px;
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 1;
+}
+
+.site-logo-text:hover {
+	color: #ca1515;
+}
+
 .header__menu {
 	padding: 30px 0 27px;
 }
