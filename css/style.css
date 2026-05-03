@@ -1,6 +1,6 @@
 /******************************************************************
-  Template Name: Ashion
-  Description: Ashion ecommerce template
+  Template Name: Farha E-com
+  Description: Farha E-com ecommerce template
   Author: Colorib
   Author URI: https://colorlib.com/
   Version: 1.0
@@ -343,7 +343,7 @@ ol {
 }
 
 .admin-login {
-	background: #f7f7f7;
+	background: #fff6fa;
 	min-height: 620px;
 }
 
@@ -413,9 +413,64 @@ ol {
 }
 
 .admin-dashboard {
-	background: #f7f7f7;
+	background: #fff6fa;
 	min-height: calc(100vh - 82px);
 	padding: 70px 0;
+}
+
+.admin-body {
+	background: #fff6fa;
+}
+
+.admin-dashboard__actions {
+	align-items: center;
+	display: flex;
+	gap: 14px;
+}
+
+.admin-dashboard__link {
+	color: #ca155b;
+	font-size: 13px;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.admin-dashboard__intro {
+	align-items: flex-end;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 28px;
+}
+
+.admin-dashboard__intro span,
+.admin-panel-heading span {
+	color: #ca155b;
+	display: block;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0;
+	margin-bottom: 8px;
+	text-transform: uppercase;
+}
+
+.admin-dashboard__intro h1 {
+	color: #111111;
+	font-size: 34px;
+	font-weight: 800;
+	margin-bottom: 8px;
+}
+
+.admin-dashboard__intro p {
+	max-width: 680px;
+}
+
+.admin-dashboard__status {
+	color: #ca155b;
+	font-size: 13px;
+	font-weight: 700;
+	margin: 0;
+	min-height: 24px;
+	text-align: right;
 }
 
 .admin-dashboard__logout {
@@ -442,6 +497,163 @@ ol {
 	border: 1px solid #eeeeee;
 	box-shadow: 0 16px 38px rgba(202, 21, 91, 0.12);
 	padding: 28px;
+}
+
+.admin-portal-layout {
+	display: grid;
+	gap: 24px;
+	grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+	margin-bottom: 24px;
+}
+
+.admin-panel-heading {
+	align-items: center;
+	display: flex;
+	gap: 20px;
+	justify-content: space-between;
+	margin-bottom: 24px;
+}
+
+.admin-panel-heading h4 {
+	font-weight: 800;
+}
+
+.admin-form label {
+	color: #111111;
+	display: block;
+	font-size: 13px;
+	font-weight: 700;
+	margin-bottom: 16px;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea,
+.admin-table-tools input,
+.admin-table-tools select {
+	background: #fffaff;
+	border: 1px solid #f0c3d2;
+	color: #111111;
+	font-size: 14px;
+	margin-top: 8px;
+	padding: 12px 14px;
+	width: 100%;
+}
+
+.admin-form textarea {
+	resize: vertical;
+}
+
+.admin-form__grid {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-file-control {
+	background: #fff6fa;
+	border: 1px dashed #e99ab5;
+	padding: 14px;
+}
+
+.admin-file-control input,
+.admin-import-button input {
+	display: none;
+}
+
+.admin-check {
+	align-items: center;
+	display: flex !important;
+	gap: 10px;
+}
+
+.admin-check input {
+	margin: 0;
+	width: auto;
+}
+
+.admin-soft-button,
+.admin-link-button {
+	background: #fff6fa;
+	border: 1px solid #f0c3d2;
+	color: #ca155b;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 13px;
+	font-weight: 700;
+	padding: 10px 14px;
+}
+
+.admin-soft-button--danger,
+.admin-link-button--danger {
+	color: #9e123f;
+}
+
+.admin-tools {
+	border-top: 1px solid #f3d2dc;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 24px;
+	padding-top: 22px;
+}
+
+.admin-tools h5 {
+	flex: 0 0 100%;
+	font-weight: 800;
+}
+
+.admin-table-tools {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: minmax(220px, 1fr) 180px;
+}
+
+.admin-table-wrap {
+	overflow-x: auto;
+}
+
+.admin-table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.admin-table th,
+.admin-table td {
+	border-bottom: 1px solid #f3d2dc;
+	color: #333333;
+	font-size: 14px;
+	padding: 14px 12px;
+	vertical-align: middle;
+}
+
+.admin-table th {
+	color: #111111;
+	font-weight: 800;
+	text-transform: uppercase;
+}
+
+.admin-table td span {
+	color: #888888;
+	display: block;
+	font-size: 12px;
+	margin-top: 3px;
+}
+
+.admin-product-thumb {
+	background: #fff6fa;
+	height: 64px;
+	object-fit: cover;
+	width: 64px;
+}
+
+.admin-stock-low {
+	color: #ca155b !important;
+	font-weight: 800;
+}
+
+.admin-empty {
+	text-align: center;
 }
 
 .admin-dashboard__item span {
@@ -3530,6 +3742,19 @@ ol {
 @media only screen and (max-width: 767px) {
 	.admin-dashboard__grid {
 		grid-template-columns: 1fr;
+	}
+	.admin-portal-layout,
+	.admin-form__grid,
+	.admin-table-tools {
+		grid-template-columns: 1fr;
+	}
+	.admin-dashboard__intro,
+	.admin-panel-heading {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+	.admin-dashboard__intro h1 {
+		font-size: 28px;
 	}
 	.admin-dashboard__header {
 		padding: 20px;

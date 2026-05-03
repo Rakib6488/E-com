@@ -1,0 +1,307 @@
+'use strict';
+
+(function () {
+    var STORAGE_KEY = 'farhaEcomContent';
+    var DEFAULT_IMAGE = 'img/product/product-1.jpg';
+
+    var defaultContent = {
+        settings: {
+            siteName: 'Farha E-com',
+            instagram: '@ farha_ecom',
+            footerText: 'Farha E-com brings fresh fashion, accessories, and beauty picks together in one easy shop.',
+            announcement: 'Free shipping on orders over $99'
+        },
+        products: [
+            {
+                id: 'p-1',
+                name: 'Buttons tweed blazer',
+                category: 'women',
+                price: 59,
+                salePrice: '',
+                image: 'img/product/product-1.jpg',
+                badge: 'New',
+                stock: 18,
+                sku: 'FEC-W-001',
+                description: 'A polished everyday blazer for office and evening looks.',
+                featured: true
+            },
+            {
+                id: 'p-2',
+                name: 'Flowy striped skirt',
+                category: 'women',
+                price: 49,
+                salePrice: '',
+                image: 'img/product/product-2.jpg',
+                badge: '',
+                stock: 24,
+                sku: 'FEC-W-002',
+                description: 'Light striped skirt with easy movement.',
+                featured: true
+            },
+            {
+                id: 'p-3',
+                name: 'Croc-effect bag',
+                category: 'accessories',
+                price: 59,
+                salePrice: '',
+                image: 'img/product/product-3.jpg',
+                badge: 'Out Of Stock',
+                stock: 0,
+                sku: 'FEC-A-003',
+                description: 'Structured croc-effect handbag.',
+                featured: true
+            },
+            {
+                id: 'p-4',
+                name: 'Slim striped pocket shirt',
+                category: 'men',
+                price: 59,
+                salePrice: '',
+                image: 'img/product/product-4.jpg',
+                badge: '',
+                stock: 15,
+                sku: 'FEC-M-004',
+                description: 'A clean striped shirt with a slim fit.',
+                featured: true
+            },
+            {
+                id: 'p-5',
+                name: 'Fit micro corduroy shirt',
+                category: 'kid',
+                price: 59,
+                salePrice: '',
+                image: 'img/product/product-5.jpg',
+                badge: '',
+                stock: 12,
+                sku: 'FEC-K-005',
+                description: 'Soft corduroy shirt for kids.',
+                featured: true
+            },
+            {
+                id: 'p-6',
+                name: 'Tropical Kimono',
+                category: 'women',
+                price: 59,
+                salePrice: 49,
+                image: 'img/product/product-6.jpg',
+                badge: 'Sale',
+                stock: 20,
+                sku: 'FEC-W-006',
+                description: 'Bright kimono layer for warm days.',
+                featured: true
+            },
+            {
+                id: 'p-7',
+                name: 'Contrasting sunglasses',
+                category: 'accessories',
+                price: 59,
+                salePrice: '',
+                image: 'img/product/product-7.jpg',
+                badge: '',
+                stock: 32,
+                sku: 'FEC-A-007',
+                description: 'Bold sunglasses with contrast frames.',
+                featured: true
+            },
+            {
+                id: 'p-8',
+                name: 'Water resistant backpack',
+                category: 'accessories',
+                price: 59,
+                salePrice: 49,
+                image: 'img/product/product-8.jpg',
+                badge: 'Sale',
+                stock: 8,
+                sku: 'FEC-A-008',
+                description: 'Durable everyday backpack.',
+                featured: true
+            }
+        ]
+    };
+
+    function clone(value) {
+        return JSON.parse(JSON.stringify(value));
+    }
+
+    function load() {
+        var saved = localStorage.getItem(STORAGE_KEY);
+
+        if (!saved) {
+            save(defaultContent);
+            return clone(defaultContent);
+        }
+
+        try {
+            var content = JSON.parse(saved);
+            content.settings = Object.assign({}, defaultContent.settings, content.settings || {});
+            content.products = Array.isArray(content.products) ? content.products : clone(defaultContent.products);
+            return content;
+        } catch (error) {
+            save(defaultContent);
+            return clone(defaultContent);
+        }
+    }
+
+    function save(content) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
+    }
+
+    function reset() {
+        save(defaultContent);
+        return clone(defaultContent);
+    }
+
+    function money(value) {
+        var amount = Number(value);
+
+        if (!Number.isFinite(amount)) {
+            amount = 0;
+        }
+
+        return '$ ' + amount.toFixed(amount % 1 === 0 ? 0 : 2);
+    }
+
+    function safeText(value) {
+        return String(value || '').replace(/[&<>"']/g, function (character) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[character];
+        });
+    }
+
+    function categoryClass(category) {
+        return String(category || 'women').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    }
+
+    function renderPrice(product) {
+        if (product.salePrice !== '' && product.salePrice !== null && product.salePrice !== undefined) {
+            return money(product.salePrice) + ' <span>' + money(product.price) + '</span>';
+        }
+
+        return money(product.price);
+    }
+
+    function renderRating() {
+        return '<div class="rating">' +
+            '<i class="fa fa-star"></i>' +
+            '<i class="fa fa-star"></i>' +
+            '<i class="fa fa-star"></i>' +
+            '<i class="fa fa-star"></i>' +
+            '<i class="fa fa-star"></i>' +
+            '</div>';
+    }
+
+    function renderBadge(product) {
+        var badge = safeText(product.badge);
+
+        if (!badge) {
+            return '';
+        }
+
+        var badgeClass = badge.toLowerCase().indexOf('stock') !== -1 ? 'stockout' : badge.toLowerCase();
+        return '<div class="label ' + safeText(badgeClass) + '">' + badge + '</div>';
+    }
+
+    function productCard(product, columnClass) {
+        var image = product.image || DEFAULT_IMAGE;
+        var category = categoryClass(product.category);
+        var saleClass = product.salePrice !== '' && product.salePrice !== null && product.salePrice !== undefined ? ' sale' : '';
+
+        return '<div class="' + columnClass + ' mix ' + category + '">' +
+            '<div class="product__item' + saleClass + '">' +
+            '<div class="product__item__pic set-bg" data-setbg="' + safeText(image) + '">' +
+            renderBadge(product) +
+            '<ul class="product__hover">' +
+            '<li><a href="' + safeText(image) + '" class="image-popup"><span class="arrow_expand"></span></a></li>' +
+            '<li><a href="#"><span class="icon_heart_alt"></span></a></li>' +
+            '<li><a href="#"><span class="icon_bag_alt"></span></a></li>' +
+            '</ul>' +
+            '</div>' +
+            '<div class="product__item__text">' +
+            '<h6><a href="./product-details.html">' + safeText(product.name) + '</a></h6>' +
+            renderRating() +
+            '<div class="product__price">' + renderPrice(product) + '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+    }
+
+    function applyBackgrounds(scope) {
+        var root = scope || document;
+        var items = root.querySelectorAll('.set-bg');
+
+        items.forEach(function (item) {
+            var bg = item.getAttribute('data-setbg');
+
+            if (bg) {
+                item.style.backgroundImage = 'url(' + bg + ')';
+            }
+        });
+    }
+
+    function renderProducts() {
+        var content = load();
+        var products = content.products;
+        var homeGallery = document.querySelector('[data-farha-products="home"]');
+        var shopGallery = document.querySelector('[data-farha-products="shop"]');
+
+        if (homeGallery) {
+            homeGallery.innerHTML = products.filter(function (product) {
+                return product.featured !== false;
+            }).slice(0, 8).map(function (product) {
+                return productCard(product, 'col-lg-3 col-md-4 col-sm-6');
+            }).join('');
+            applyBackgrounds(homeGallery);
+        }
+
+        if (shopGallery) {
+            shopGallery.innerHTML = products.map(function (product) {
+                return productCard(product, 'col-lg-4 col-md-6');
+            }).join('') +
+            '<div class="col-lg-12 text-center"><div class="pagination__option"><a href="#">1</a><a href="#">2</a><a href="#">3</a><a href="#"><i class="fa fa-angle-right"></i></a></div></div>';
+            applyBackgrounds(shopGallery);
+        }
+    }
+
+    function applySettings() {
+        var content = load();
+        var settings = content.settings;
+
+        document.querySelectorAll('.site-logo-text, [data-farha-brand]').forEach(function (item) {
+            item.textContent = settings.siteName || 'Farha E-com';
+        });
+
+        document.querySelectorAll('[data-farha-instagram]').forEach(function (item) {
+            item.textContent = settings.instagram || '@ farha_ecom';
+        });
+
+        document.querySelectorAll('[data-farha-footer]').forEach(function (item) {
+            item.textContent = settings.footerText || defaultContent.settings.footerText;
+        });
+
+        document.title = document.title.replace(/^.*Farha E-com/, settings.siteName || 'Farha E-com');
+    }
+
+    function initPublic() {
+        applySettings();
+        renderProducts();
+    }
+
+    window.FarhaStore = {
+        defaultContent: clone(defaultContent),
+        load: load,
+        save: save,
+        reset: reset,
+        money: money,
+        safeText: safeText,
+        applySettings: applySettings,
+        renderProducts: renderProducts,
+        initPublic: initPublic
+    };
+
+    document.addEventListener('DOMContentLoaded', initPublic);
+}());

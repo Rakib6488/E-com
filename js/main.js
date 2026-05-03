@@ -1,6 +1,6 @@
 /*  ---------------------------------------------------
-Template Name: Ashion
-Description: Ashion ecommerce template
+Template Name: Farha E-com
+Description: Farha E-com ecommerce template
 Author: Colorib
 Author URI: https://colorlib.com/
 Version: 1.0
