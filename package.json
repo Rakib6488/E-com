@@ -1,0 +1,21 @@
+{
+  "name": "compiler-project",
+  "version": "1.0.0",
+  "description": "Customer and admin ecommerce portal with a Node backend.",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "keywords": [
+    "ecommerce",
+    "admin",
+    "customer",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
