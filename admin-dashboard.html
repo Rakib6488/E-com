@@ -43,6 +43,19 @@
                 <p class="admin-dashboard__status" id="admin-status" aria-live="polite"></p>
             </div>
 
+            <nav class="admin-module-nav" aria-label="Admin modules">
+                <a href="#orders">Orders</a>
+                <a href="#customers">Customers</a>
+                <a href="#payments">Payments</a>
+                <a href="#shipping">Shipping</a>
+                <a href="#reports">Reports</a>
+                <a href="#marketing">Marketing</a>
+                <a href="#roles">Roles</a>
+                <a href="#cms">CMS</a>
+                <a href="#security">Security</a>
+                <a href="#automation">Automation</a>
+            </nav>
+
             <div class="admin-dashboard__grid">
                 <div class="admin-dashboard__item">
                     <span>Total Products</span>
@@ -56,6 +69,303 @@
                     <span>Low Stock</span>
                     <strong id="low-stock-count">0</strong>
                 </div>
+                <div class="admin-dashboard__item">
+                    <span>New Orders</span>
+                    <strong id="order-count">0</strong>
+                </div>
+                <div class="admin-dashboard__item">
+                    <span>Paid Orders</span>
+                    <strong id="paid-count">0</strong>
+                </div>
+                <div class="admin-dashboard__item">
+                    <span>Monthly Sales</span>
+                    <strong id="sales-total">$ 0</strong>
+                </div>
+            </div>
+
+            <section class="admin-dashboard__panel" id="orders">
+                <div class="admin-panel-heading">
+                    <div>
+                        <span>Order Management</span>
+                        <h4>New Orders, Status, Invoice, Return</h4>
+                    </div>
+                </div>
+
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Status</th>
+                                <th>Payment</th>
+                                <th>Total</th>
+                                <th>Return / Cancel</th>
+                                <th>Invoice</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="admin-portal-layout admin-portal-layout--balanced">
+                <section class="admin-dashboard__panel" id="customers">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span>Customer Management</span>
+                            <h4>Customer List & Activity</h4>
+                        </div>
+                    </div>
+
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Contact</th>
+                                    <th>Orders</th>
+                                    <th>Activity</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customer-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="admin-dashboard__panel" id="payments">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span>Payment Management</span>
+                            <h4>Gateway, Refund, EMI</h4>
+                        </div>
+                    </div>
+
+                    <form class="admin-form" id="payment-form">
+                        <div class="admin-form__grid">
+                            <label>bKash
+                                <select id="gateway-bkash">
+                                    <option value="Enabled">Enabled</option>
+                                    <option value="Disabled">Disabled</option>
+                                </select>
+                            </label>
+                            <label>Nagad
+                                <select id="gateway-nagad">
+                                    <option value="Enabled">Enabled</option>
+                                    <option value="Disabled">Disabled</option>
+                                </select>
+                            </label>
+                            <label>Card
+                                <select id="gateway-card">
+                                    <option value="Enabled">Enabled</option>
+                                    <option value="Disabled">Disabled</option>
+                                </select>
+                            </label>
+                            <label>EMI / Installment
+                                <select id="gateway-emi">
+                                    <option value="Enabled">Enabled</option>
+                                    <option value="Disabled">Disabled</option>
+                                </select>
+                            </label>
+                        </div>
+                        <label>Refund Policy
+                            <textarea id="refund-policy" rows="3"></textarea>
+                        </label>
+                        <button class="site-btn" type="submit">Save Payment</button>
+                    </form>
+                </section>
+            </div>
+
+            <div class="admin-portal-layout admin-portal-layout--balanced">
+                <section class="admin-dashboard__panel" id="shipping">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span>Shipping / Delivery</span>
+                            <h4>Courier, Charge, Tracking</h4>
+                        </div>
+                    </div>
+
+                    <form class="admin-form" id="shipping-form">
+                        <div class="admin-form__grid">
+                            <label>Default Courier
+                                <select id="shipping-courier">
+                                    <option value="Pathao">Pathao</option>
+                                    <option value="RedX">RedX</option>
+                                    <option value="Sundarban">Sundarban</option>
+                                </select>
+                            </label>
+                            <label>Delivery Charge
+                                <input id="shipping-charge" min="0" step="1" type="number">
+                            </label>
+                            <label>Tracking Number
+                                <input id="shipping-tracking" type="text">
+                            </label>
+                            <label>Delivery Status
+                                <select id="shipping-status">
+                                    <option value="Pending Pickup">Pending Pickup</option>
+                                    <option value="In Transit">In Transit</option>
+                                    <option value="Delivered">Delivered</option>
+                                </select>
+                            </label>
+                        </div>
+                        <button class="site-btn" type="submit">Save Shipping</button>
+                    </form>
+                </section>
+
+                <section class="admin-dashboard__panel" id="reports">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span>Reports & Analytics</span>
+                            <h4>Sales, Profit, Top Products</h4>
+                        </div>
+                    </div>
+
+                    <div class="admin-report-grid" id="report-grid"></div>
+                    <div class="admin-progress-list" id="top-products"></div>
+                </section>
+            </div>
+
+            <section class="admin-dashboard__panel" id="marketing">
+                <div class="admin-panel-heading">
+                    <div>
+                        <span>Marketing Tools</span>
+                        <h4>Coupon, Campaign, Email/SMS, Push</h4>
+                    </div>
+                </div>
+
+                <form class="admin-form" id="marketing-form">
+                    <div class="admin-form__grid">
+                        <label>Coupon / Promo Code
+                            <input id="marketing-coupon" type="text">
+                        </label>
+                        <label>Discount Campaign
+                            <input id="marketing-campaign" type="text">
+                        </label>
+                        <label>Email / SMS Message
+                            <input id="marketing-message" type="text">
+                        </label>
+                        <label>Push Notification
+                            <input id="marketing-push" type="text">
+                        </label>
+                    </div>
+                    <button class="site-btn" type="submit">Save Marketing</button>
+                </form>
+            </section>
+
+            <div class="admin-portal-layout admin-portal-layout--balanced">
+                <section class="admin-dashboard__panel" id="roles">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span>User Role & Admin Control</span>
+                            <h4>Access, Permission, Activity Log</h4>
+                        </div>
+                    </div>
+
+                    <form class="admin-form" id="role-form">
+                        <div class="admin-form__grid">
+                            <label>Admin Access
+                                <select id="role-admin">
+                                    <option value="Full">Full</option>
+                                    <option value="Limited">Limited</option>
+                                </select>
+                            </label>
+                            <label>Staff Access
+                                <select id="role-staff">
+                                    <option value="Limited">Limited</option>
+                                    <option value="Full">Full</option>
+                                </select>
+                            </label>
+                        </div>
+                        <button class="site-btn" type="submit">Save Roles</button>
+                    </form>
+                    <div class="admin-log-list" id="activity-log"></div>
+                </section>
+
+                <section class="admin-dashboard__panel" id="cms">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span>Website CMS</span>
+                            <h4>Banner, Homepage, Blog, SEO</h4>
+                        </div>
+                    </div>
+
+                    <form class="admin-form" id="cms-form">
+                        <label>Banner / Slider Text
+                            <input id="cms-banner" type="text">
+                        </label>
+                        <label>Homepage Headline
+                            <input id="cms-homepage" type="text">
+                        </label>
+                        <label>Blog / Content Title
+                            <input id="cms-blog" type="text">
+                        </label>
+                        <label>SEO Meta Description
+                            <textarea id="cms-seo" rows="3"></textarea>
+                        </label>
+                        <button class="site-btn" type="submit">Save CMS</button>
+                    </form>
+                </section>
+            </div>
+
+            <div class="admin-portal-layout admin-portal-layout--balanced">
+                <section class="admin-dashboard__panel" id="security">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span>Security & Backup</span>
+                            <h4>2FA, Backup, Fraud Detection</h4>
+                        </div>
+                    </div>
+
+                    <form class="admin-form" id="security-form">
+                        <label class="admin-check">
+                            <input id="security-2fa" type="checkbox">
+                            <span>Require login security 2FA</span>
+                        </label>
+                        <label>Backup Frequency
+                            <select id="security-backup">
+                                <option value="Daily">Daily</option>
+                                <option value="Weekly">Weekly</option>
+                                <option value="Monthly">Monthly</option>
+                            </select>
+                        </label>
+                        <label>Fraud Detection
+                            <select id="security-fraud">
+                                <option value="Enabled">Enabled</option>
+                                <option value="Review Only">Review Only</option>
+                                <option value="Disabled">Disabled</option>
+                            </select>
+                        </label>
+                        <button class="site-btn" type="submit">Save Security</button>
+                    </form>
+                </section>
+
+                <section class="admin-dashboard__panel" id="automation">
+                    <div class="admin-panel-heading">
+                        <div>
+                            <span>Automation</span>
+                            <h4>Confirmation, Stock, Cart Reminder</h4>
+                        </div>
+                    </div>
+
+                    <form class="admin-form" id="automation-form">
+                        <label class="admin-check">
+                            <input id="auto-confirmation" type="checkbox">
+                            <span>Auto order confirmation</span>
+                        </label>
+                        <label class="admin-check">
+                            <input id="auto-stock" type="checkbox">
+                            <span>Auto stock update</span>
+                        </label>
+                        <label>Abandoned Cart Reminder
+                            <select id="auto-cart">
+                                <option value="Off">Off</option>
+                                <option value="After 1 hour">After 1 hour</option>
+                                <option value="After 24 hours">After 24 hours</option>
+                            </select>
+                        </label>
+                        <button class="site-btn" type="submit">Save Automation</button>
+                    </form>
+                </section>
             </div>
 
             <div class="admin-portal-layout">

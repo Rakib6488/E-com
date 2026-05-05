@@ -18,10 +18,18 @@
     var productCount = document.getElementById('product-count');
     var inventoryCount = document.getElementById('inventory-count');
     var lowStockCount = document.getElementById('low-stock-count');
+    var orderCount = document.getElementById('order-count');
+    var paidCount = document.getElementById('paid-count');
+    var salesTotal = document.getElementById('sales-total');
     var statusMessage = document.getElementById('admin-status');
     var searchInput = document.getElementById('product-search');
     var categoryFilter = document.getElementById('category-filter');
     var imageInput = document.getElementById('product-image-file');
+    var orderTable = document.getElementById('order-table-body');
+    var customerTable = document.getElementById('customer-table-body');
+    var reportGrid = document.getElementById('report-grid');
+    var topProducts = document.getElementById('top-products');
+    var activityLog = document.getElementById('activity-log');
 
     function notify(message) {
         statusMessage.textContent = message;
@@ -41,7 +49,30 @@
     }
 
     function setValue(id, nextValue) {
-        document.getElementById(id).value = nextValue || '';
+        document.getElementById(id).value = nextValue === 0 ? 0 : (nextValue || '');
+    }
+
+    function setChecked(id, checked) {
+        document.getElementById(id).checked = Boolean(checked);
+    }
+
+    function ensureAdminContent() {
+        content.orders = Array.isArray(content.orders) ? content.orders : [];
+        content.customers = Array.isArray(content.customers) ? content.customers : [];
+        content.settings.payments = content.settings.payments || {};
+        content.settings.shipping = content.settings.shipping || {};
+        content.settings.marketing = content.settings.marketing || {};
+        content.settings.roles = content.settings.roles || {};
+        content.settings.cms = content.settings.cms || {};
+        content.settings.security = content.settings.security || {};
+        content.settings.automation = content.settings.automation || {};
+    }
+
+    function addActivity(message) {
+        var roles = content.settings.roles;
+        roles.activityLog = Array.isArray(roles.activityLog) ? roles.activityLog : [];
+        roles.activityLog.unshift(message);
+        roles.activityLog = roles.activityLog.slice(0, 6);
     }
 
     function productFromForm() {
@@ -191,6 +222,47 @@
         }
     }
 
+    function renderOrders() {
+        orderTable.innerHTML = content.orders.map(function (order) {
+            return '<tr>' +
+                '<td><strong>' + window.FarhaStore.safeText(order.id) + '</strong><span>' + window.FarhaStore.safeText(order.date) + '</span></td>' +
+                '<td>' + window.FarhaStore.safeText(order.customer) + '<span>' + window.FarhaStore.safeText(order.method) + '</span></td>' +
+                '<td><select class="admin-inline-select" data-order-status="' + order.id + '">' +
+                statusOption(order.status, 'Pending') +
+                statusOption(order.status, 'Processing') +
+                statusOption(order.status, 'Delivered') +
+                '</select></td>' +
+                '<td><select class="admin-inline-select" data-payment-status="' + order.id + '">' +
+                statusOption(order.payment, 'Paid') +
+                statusOption(order.payment, 'Unpaid') +
+                '</select></td>' +
+                '<td>' + window.FarhaStore.money(order.total) + '</td>' +
+                '<td><select class="admin-inline-select" data-return-status="' + order.id + '">' +
+                statusOption(order.returnStatus, 'None') +
+                statusOption(order.returnStatus, 'Return Requested') +
+                statusOption(order.returnStatus, 'Returned') +
+                statusOption(order.returnStatus, 'Cancelled') +
+                '</select></td>' +
+                '<td><button class="admin-link-button" data-invoice="' + order.id + '" type="button">Generate</button></td>' +
+                '</tr>';
+        }).join('');
+    }
+
+    function statusOption(current, value) {
+        return '<option value="' + value + '"' + (current === value ? ' selected' : '') + '>' + value + '</option>';
+    }
+
+    function renderCustomers() {
+        customerTable.innerHTML = content.customers.map(function (customer) {
+            return '<tr>' +
+                '<td><strong>' + window.FarhaStore.safeText(customer.name) + '</strong><span>Total spent ' + window.FarhaStore.money(customer.spent) + '</span></td>' +
+                '<td>' + window.FarhaStore.safeText(customer.phone) + '<span>' + window.FarhaStore.safeText(customer.email) + '</span></td>' +
+                '<td>' + Number(customer.orders || 0) + '<span>Order history</span></td>' +
+                '<td>' + window.FarhaStore.safeText(customer.activity) + '</td>' +
+                '</tr>';
+        }).join('');
+    }
+
     function renderTrends() {
         var sectionOrder = { hot: 1, best: 2, feature: 3 };
         var trends = content.trends.slice().sort(function (a, b) {
@@ -215,10 +287,51 @@
         var lowStock = content.products.filter(function (product) {
             return Number(product.stock || 0) <= 5;
         }).length;
+        var newOrders = content.orders.filter(function (order) {
+            return order.status !== 'Delivered' && order.returnStatus !== 'Cancelled';
+        }).length;
+        var paidOrders = content.orders.filter(function (order) {
+            return order.payment === 'Paid';
+        }).length;
+        var totalSales = content.orders.reduce(function (sum, order) {
+            return sum + (order.payment === 'Paid' ? Number(order.total || 0) : 0);
+        }, 0);
 
         productCount.textContent = content.products.length;
         inventoryCount.textContent = totalInventory;
         lowStockCount.textContent = lowStock;
+        orderCount.textContent = newOrders;
+        paidCount.textContent = paidOrders;
+        salesTotal.textContent = window.FarhaStore.money(totalSales);
+    }
+
+    function renderReports() {
+        var paidOrders = content.orders.filter(function (order) {
+            return order.payment === 'Paid';
+        });
+        var totalSales = paidOrders.reduce(function (sum, order) {
+            return sum + Number(order.total || 0);
+        }, 0);
+        var dailySales = paidOrders.slice(0, 2).reduce(function (sum, order) {
+            return sum + Number(order.total || 0);
+        }, 0);
+        var profit = Math.round(totalSales * 0.32);
+        var customerCount = content.customers.length;
+
+        reportGrid.innerHTML = [
+            ['Daily sales', window.FarhaStore.money(dailySales)],
+            ['Monthly sales', window.FarhaStore.money(totalSales)],
+            ['Profit / loss', window.FarhaStore.money(profit) + ' profit'],
+            ['Customer behavior', customerCount + ' active customers']
+        ].map(function (item) {
+            return '<div class="admin-report-card"><span>' + item[0] + '</span><strong>' + item[1] + '</strong></div>';
+        }).join('');
+
+        var products = content.products.slice(0, 4);
+        topProducts.innerHTML = '<h5>Top-selling products</h5>' + products.map(function (product, index) {
+            var percent = Math.max(20, 95 - (index * 18));
+            return '<div class="admin-progress-item"><div><strong>' + window.FarhaStore.safeText(product.name) + '</strong><span>' + percent + '% sales share</span></div><b style="width:' + percent + '%"></b></div>';
+        }).join('');
     }
 
     function renderSettings() {
@@ -226,10 +339,48 @@
         setValue('setting-instagram', content.settings.instagram);
         setValue('setting-footer', content.settings.footerText);
         setValue('setting-announcement', content.settings.announcement);
+        setValue('gateway-bkash', content.settings.payments.bkash);
+        setValue('gateway-nagad', content.settings.payments.nagad);
+        setValue('gateway-card', content.settings.payments.card);
+        setValue('gateway-emi', content.settings.payments.emi);
+        setValue('refund-policy', content.settings.payments.refundPolicy);
+        setValue('shipping-courier', content.settings.shipping.courier);
+        setValue('shipping-charge', content.settings.shipping.charge);
+        setValue('shipping-tracking', content.settings.shipping.tracking);
+        setValue('shipping-status', content.settings.shipping.status);
+        setValue('marketing-coupon', content.settings.marketing.coupon);
+        setValue('marketing-campaign', content.settings.marketing.campaign);
+        setValue('marketing-message', content.settings.marketing.message);
+        setValue('marketing-push', content.settings.marketing.push);
+        setValue('role-admin', content.settings.roles.admin);
+        setValue('role-staff', content.settings.roles.staff);
+        setValue('cms-banner', content.settings.cms.banner);
+        setValue('cms-homepage', content.settings.cms.homepage);
+        setValue('cms-blog', content.settings.cms.blog);
+        setValue('cms-seo', content.settings.cms.seo);
+        setChecked('security-2fa', content.settings.security.twoFactor);
+        setValue('security-backup', content.settings.security.backup);
+        setValue('security-fraud', content.settings.security.fraud);
+        setChecked('auto-confirmation', content.settings.automation.confirmation);
+        setChecked('auto-stock', content.settings.automation.stock);
+        setValue('auto-cart', content.settings.automation.cart);
+        renderActivityLog();
+    }
+
+    function renderActivityLog() {
+        var items = content.settings.roles.activityLog || [];
+        activityLog.innerHTML = '<h5>Activity log</h5>' + items.map(function (item) {
+            return '<p>' + window.FarhaStore.safeText(item) + '</p>';
+        }).join('');
     }
 
     function render() {
+        ensureAdminContent();
         renderStats();
+        renderOrders();
+        renderCustomers();
+        renderReports();
+        renderActivityLog();
         renderProducts();
         renderTrends();
         window.FarhaStore.applySettings();
@@ -284,7 +435,111 @@
         content.settings.instagram = value('setting-instagram') || '@ farha_ecom';
         content.settings.footerText = value('setting-footer');
         content.settings.announcement = value('setting-announcement');
+        addActivity('Admin updated website settings');
         saveContent('Website settings saved');
+    });
+
+    orderTable.addEventListener('change', function (event) {
+        var orderId = event.target.getAttribute('data-order-status') ||
+            event.target.getAttribute('data-payment-status') ||
+            event.target.getAttribute('data-return-status');
+        var field = event.target.getAttribute('data-order-status') ? 'status' :
+            event.target.getAttribute('data-payment-status') ? 'payment' : 'returnStatus';
+
+        content.orders = content.orders.map(function (order) {
+            if (order.id === orderId) {
+                order[field] = event.target.value;
+                addActivity('Admin changed ' + order.id + ' ' + field + ' to ' + event.target.value);
+            }
+
+            return order;
+        });
+        saveContent('Order updated');
+    });
+
+    orderTable.addEventListener('click', function (event) {
+        var invoiceId = event.target.getAttribute('data-invoice');
+        var order;
+
+        if (!invoiceId) {
+            return;
+        }
+
+        order = content.orders.find(function (item) {
+            return item.id === invoiceId;
+        });
+
+        if (order) {
+            addActivity('Admin generated invoice for ' + order.id);
+            saveContent('Invoice ready: ' + order.id + ' / ' + order.customer + ' / ' + window.FarhaStore.money(order.total));
+        }
+    });
+
+    document.getElementById('payment-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        content.settings.payments.bkash = value('gateway-bkash');
+        content.settings.payments.nagad = value('gateway-nagad');
+        content.settings.payments.card = value('gateway-card');
+        content.settings.payments.emi = value('gateway-emi');
+        content.settings.payments.refundPolicy = value('refund-policy');
+        addActivity('Admin updated payment gateway setup');
+        saveContent('Payment settings saved');
+    });
+
+    document.getElementById('shipping-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        content.settings.shipping.courier = value('shipping-courier');
+        content.settings.shipping.charge = Number(value('shipping-charge')) || 0;
+        content.settings.shipping.tracking = value('shipping-tracking');
+        content.settings.shipping.status = value('shipping-status');
+        addActivity('Admin updated shipping delivery setup');
+        saveContent('Shipping settings saved');
+    });
+
+    document.getElementById('marketing-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        content.settings.marketing.coupon = value('marketing-coupon');
+        content.settings.marketing.campaign = value('marketing-campaign');
+        content.settings.marketing.message = value('marketing-message');
+        content.settings.marketing.push = value('marketing-push');
+        addActivity('Admin updated marketing tools');
+        saveContent('Marketing settings saved');
+    });
+
+    document.getElementById('role-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        content.settings.roles.admin = value('role-admin');
+        content.settings.roles.staff = value('role-staff');
+        addActivity('Admin updated user role permissions');
+        saveContent('Role settings saved');
+    });
+
+    document.getElementById('cms-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        content.settings.cms.banner = value('cms-banner');
+        content.settings.cms.homepage = value('cms-homepage');
+        content.settings.cms.blog = value('cms-blog');
+        content.settings.cms.seo = value('cms-seo');
+        addActivity('Admin updated CMS content and SEO');
+        saveContent('CMS settings saved');
+    });
+
+    document.getElementById('security-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        content.settings.security.twoFactor = document.getElementById('security-2fa').checked;
+        content.settings.security.backup = value('security-backup');
+        content.settings.security.fraud = value('security-fraud');
+        addActivity('Admin updated security and backup settings');
+        saveContent('Security settings saved');
+    });
+
+    document.getElementById('automation-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        content.settings.automation.confirmation = document.getElementById('auto-confirmation').checked;
+        content.settings.automation.stock = document.getElementById('auto-stock').checked;
+        content.settings.automation.cart = value('auto-cart');
+        addActivity('Admin updated automation rules');
+        saveContent('Automation settings saved');
     });
 
     productTable.addEventListener('click', function (event) {
@@ -335,8 +590,11 @@
             try {
                 var imported = JSON.parse(reader.result);
                 content.settings = Object.assign({}, content.settings, imported.settings || {});
+                content.orders = Array.isArray(imported.orders) ? imported.orders : content.orders;
+                content.customers = Array.isArray(imported.customers) ? imported.customers : content.customers;
                 content.products = Array.isArray(imported.products) ? imported.products : content.products;
                 content.trends = Array.isArray(imported.trends) ? imported.trends : content.trends;
+                ensureAdminContent();
                 saveContent('Content imported');
             } catch (error) {
                 notify('Import failed. Use a valid JSON file.');

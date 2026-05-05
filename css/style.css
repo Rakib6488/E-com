@@ -487,7 +487,7 @@ ol {
 .admin-dashboard__grid {
 	display: grid;
 	gap: 20px;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(6, 1fr);
 	margin-bottom: 30px;
 }
 
@@ -504,6 +504,30 @@ ol {
 	gap: 24px;
 	grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
 	margin-bottom: 24px;
+}
+
+.admin-portal-layout--balanced {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-module-nav {
+	background: #ffffff;
+	border: 1px solid #eeeeee;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 24px;
+	padding: 16px;
+}
+
+.admin-module-nav a {
+	background: #fff6fa;
+	border: 1px solid #f0c3d2;
+	color: #ca155b;
+	font-size: 12px;
+	font-weight: 800;
+	padding: 9px 12px;
+	text-transform: uppercase;
 }
 
 .admin-panel-heading {
@@ -530,7 +554,8 @@ ol {
 .admin-form select,
 .admin-form textarea,
 .admin-table-tools input,
-.admin-table-tools select {
+.admin-table-tools select,
+.admin-inline-select {
 	background: #fffaff;
 	border: 1px solid #f0c3d2;
 	color: #111111;
@@ -538,6 +563,12 @@ ol {
 	margin-top: 8px;
 	padding: 12px 14px;
 	width: 100%;
+}
+
+.admin-inline-select {
+	margin-top: 0;
+	min-width: 130px;
+	padding: 9px 10px;
 }
 
 .admin-form textarea {
@@ -674,13 +705,92 @@ ol {
 .admin-dashboard__item strong {
 	color: #111111;
 	display: block;
-	font-size: 32px;
+	font-size: 26px;
 	line-height: 1;
 }
 
 .admin-dashboard__panel h5 {
 	font-weight: 700;
 	margin-bottom: 10px;
+}
+
+.admin-dashboard__panel {
+	margin-bottom: 24px;
+}
+
+.admin-report-grid {
+	display: grid;
+	gap: 14px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	margin-bottom: 22px;
+}
+
+.admin-report-card {
+	background: #fff6fa;
+	border: 1px solid #f3d2dc;
+	padding: 16px;
+}
+
+.admin-report-card span,
+.admin-progress-item span {
+	color: #777777;
+	display: block;
+	font-size: 12px;
+	font-weight: 700;
+	margin-bottom: 6px;
+	text-transform: uppercase;
+}
+
+.admin-report-card strong {
+	color: #111111;
+	font-size: 20px;
+	font-weight: 800;
+}
+
+.admin-progress-list h5,
+.admin-log-list h5 {
+	font-weight: 800;
+	margin-bottom: 12px;
+}
+
+.admin-progress-item {
+	background: #fffaff;
+	border: 1px solid #f3d2dc;
+	margin-bottom: 12px;
+	padding: 12px;
+	position: relative;
+}
+
+.admin-progress-item strong {
+	color: #111111;
+	display: block;
+	font-size: 14px;
+	margin-bottom: 4px;
+}
+
+.admin-progress-item b {
+	background: #ca155b;
+	bottom: 0;
+	display: block;
+	height: 3px;
+	left: 0;
+	position: absolute;
+}
+
+.admin-log-list {
+	border-top: 1px solid #f3d2dc;
+	margin-top: 22px;
+	padding-top: 20px;
+}
+
+.admin-log-list p {
+	background: #fff6fa;
+	border-left: 3px solid #ca155b;
+	color: #444444;
+	font-size: 13px;
+	line-height: 20px;
+	margin-bottom: 10px;
+	padding: 10px 12px;
 }
 
 .header__menu {
@@ -3746,6 +3856,16 @@ ol {
 }
 
 /* Wide Mobile = 480px */
+
+@media only screen and (max-width: 1199px) {
+	.admin-dashboard__grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+	.admin-portal-layout,
+	.admin-portal-layout--balanced {
+		grid-template-columns: 1fr;
+	}
+}
 
 @media only screen and (max-width: 767px) {
 	.admin-dashboard__grid {

@@ -9,8 +9,119 @@
             siteName: 'Farha E-com',
             instagram: '@ farha_ecom',
             footerText: 'Farha E-com brings fresh fashion, accessories, and beauty picks together in one easy shop.',
-            announcement: 'Free shipping on orders over $99'
+            announcement: 'Free shipping on orders over $99',
+            payments: {
+                bkash: 'Enabled',
+                nagad: 'Enabled',
+                card: 'Enabled',
+                emi: 'Disabled',
+                refundPolicy: 'Refund requests are reviewed within 3 business days after return approval.'
+            },
+            shipping: {
+                courier: 'Pathao',
+                charge: 80,
+                tracking: 'PX-2401-8842',
+                status: 'In Transit'
+            },
+            marketing: {
+                coupon: 'FARHA10',
+                campaign: 'Eid fashion flash sale',
+                message: 'New arrivals are live with limited-time discount.',
+                push: 'Your cart picks are waiting.'
+            },
+            roles: {
+                admin: 'Full',
+                staff: 'Limited',
+                activityLog: [
+                    'Admin updated order ORD-1003 to Processing',
+                    'Staff exported content backup',
+                    'Admin changed homepage trend section'
+                ]
+            },
+            cms: {
+                banner: 'Fresh styles for every day',
+                homepage: 'Women, men, kids, accessories, and beauty',
+                blog: 'How to style new season essentials',
+                seo: 'Shop fashion, accessories, cosmetics, and everyday essentials at Farha E-com.'
+            },
+            security: {
+                twoFactor: true,
+                backup: 'Daily',
+                fraud: 'Enabled'
+            },
+            automation: {
+                confirmation: true,
+                stock: true,
+                cart: 'After 24 hours'
+            }
         },
+        orders: [
+            {
+                id: 'ORD-1001',
+                customerId: 'c-1',
+                customer: 'Nusrat Jahan',
+                date: '2026-05-03',
+                status: 'Pending',
+                payment: 'Unpaid',
+                method: 'bKash',
+                total: 245,
+                returnStatus: 'None',
+                tracking: ''
+            },
+            {
+                id: 'ORD-1002',
+                customerId: 'c-2',
+                customer: 'Rafi Ahmed',
+                date: '2026-05-02',
+                status: 'Processing',
+                payment: 'Paid',
+                method: 'Card',
+                total: 177,
+                returnStatus: 'None',
+                tracking: 'RX-882101'
+            },
+            {
+                id: 'ORD-1003',
+                customerId: 'c-3',
+                customer: 'Samia Rahman',
+                date: '2026-05-01',
+                status: 'Delivered',
+                payment: 'Paid',
+                method: 'Nagad',
+                total: 318,
+                returnStatus: 'Return Requested',
+                tracking: 'PA-730002'
+            }
+        ],
+        customers: [
+            {
+                id: 'c-1',
+                name: 'Nusrat Jahan',
+                email: 'nusrat@example.com',
+                phone: '+8801711000001',
+                orders: 3,
+                spent: 428,
+                activity: 'Browsed accessories and abandoned cart reminder sent'
+            },
+            {
+                id: 'c-2',
+                name: 'Rafi Ahmed',
+                email: 'rafi@example.com',
+                phone: '+8801811000002',
+                orders: 5,
+                spent: 690,
+                activity: 'Used FARHA10 coupon and paid by card'
+            },
+            {
+                id: 'c-3',
+                name: 'Samia Rahman',
+                email: 'samia@example.com',
+                phone: '+8801911000003',
+                orders: 2,
+                spent: 318,
+                activity: 'Requested return for delivered order'
+            }
+        ],
         products: [
             {
                 id: 'p-1',
@@ -208,6 +319,15 @@
         try {
             var content = JSON.parse(saved);
             content.settings = Object.assign({}, defaultContent.settings, content.settings || {});
+            content.settings.payments = Object.assign({}, defaultContent.settings.payments, content.settings.payments || {});
+            content.settings.shipping = Object.assign({}, defaultContent.settings.shipping, content.settings.shipping || {});
+            content.settings.marketing = Object.assign({}, defaultContent.settings.marketing, content.settings.marketing || {});
+            content.settings.roles = Object.assign({}, defaultContent.settings.roles, content.settings.roles || {});
+            content.settings.cms = Object.assign({}, defaultContent.settings.cms, content.settings.cms || {});
+            content.settings.security = Object.assign({}, defaultContent.settings.security, content.settings.security || {});
+            content.settings.automation = Object.assign({}, defaultContent.settings.automation, content.settings.automation || {});
+            content.orders = Array.isArray(content.orders) ? content.orders : clone(defaultContent.orders);
+            content.customers = Array.isArray(content.customers) ? content.customers : clone(defaultContent.customers);
             content.products = Array.isArray(content.products) ? content.products : clone(defaultContent.products);
             content.trends = Array.isArray(content.trends) ? content.trends : clone(defaultContent.trends);
             return content;
